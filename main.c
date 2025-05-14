@@ -6,6 +6,28 @@
 #include <netdb.h>
 #include <sys/socket.h>
 
+#define NETWORK_POWER 0
+#define BATTERY_POWER 1
+
+struct temp_reading {
+    // note that this is subject to the year 2038 problem.
+    // change to uint64_t when needed.
+    uint32_t timestamp;
+
+    // 1000 values (20-120 range with 0.1 precision) require at least 2 bytes
+    uint16_t temperature;
+
+    // one of NETWORK_POWER or BATTERY_POWER
+    uint8_t status;
+
+    // id incremented with each reading
+    uint8_t id;
+
+    // the checksum is computed as the negation of the sum of all the bytes of the structure.
+    // to validate the message, the sum of all bytes (including the checksum) must be 0
+    uint8_t checksum;
+};
+
 // returns an UDP socket descriptor for the specified ip address type or -1 on error (check errno)
 int get_udp_socket(int domain) {
     return socket(domain, SOCK_DGRAM, getprotobyname("udp")->p_proto);
