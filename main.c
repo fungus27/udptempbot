@@ -36,23 +36,23 @@ struct reading {
 
     // the checksum is computed as the negation of the sum of all the bytes of the structure.
     // to validate the message, the sum of all bytes (including the checksum) must be 0
-    int8_t checksum;
+    uint8_t checksum;
 };
 
 // computes the checksum for the reading.
 void reading_compute_checksum(struct reading *packet) {
     packet->checksum = 0;
     for (int i = 0; i < sizeof(*packet) - 1; ++i)
-        packet->checksum += ((int8_t*)packet)[i];
+        packet->checksum += ((uint8_t*)packet)[i];
     packet->checksum = -packet->checksum;
 }
 
 // validates the correctness of the reading.
 // the reading is valid if and only if this function returns 0.
 char reading_validate(struct reading *packet) {
-    int8_t sum = 0;
+    uint8_t sum = 0;
     for (int i = 0; i < sizeof(*packet); ++i)
-        sum += ((int8_t*)packet)[i];
+        sum += ((uint8_t*)packet)[i];
     return (char)sum;
 }
 
