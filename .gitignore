@@ -1,3 +1,4 @@
 *.o
 udptempbot
+server/*.o
 server/udpserver
