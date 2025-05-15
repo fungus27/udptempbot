@@ -35,7 +35,7 @@ struct reading {
     uint8_t id;
 
     // the checksum is computed as the negation of the sum of all the bytes of the structure.
-    // to validate the message, the sum of all bytes (including the checksum) must be 0
+    // to validate the message, sum all bytes (including the checksum) and check if its 0
     uint8_t checksum;
 };
 
@@ -58,7 +58,7 @@ char reading_validate(struct reading *packet) {
 
 // initializes the reading packet.
 // the user should use this function instead of manually initializing the struct,
-// due to the cap on temperature and checksum.
+// due to the cap on temperature and the need to calculate checksum.
 // the temperature argument is clamped to the range 200-1200 and is then divided by 10 to get the true
 // temperature.
 // status should be one of NETWORK_POWER, BATTERY_POWER.
@@ -95,6 +95,7 @@ void reading_display(struct reading *packet) {
 // before sending it through the given socket to the given destination.
 // we serialize the packet manually, because packed structs are platform dependent.
 // returns the status code of sendto.
+// also see reading_recvfrom() in server/main.c.
 int reading_sendto(struct reading *packet, int sockfd, struct sockaddr *address, socklen_t addrlen) {
     uint8_t buffer[READING_SIZE];
     uint32_t timestamp_no = htonl(packet->timestamp);
